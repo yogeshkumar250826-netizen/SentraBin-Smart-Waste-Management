@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "models.h"
 #include "bin.h"
 #include "fleet.h"
-#include "distance.h"
+#include "routing.h"
 
 int main(void)
 {
@@ -15,9 +17,12 @@ int main(void)
     int vehicleCount = 0;
     int driverCount = 0;
 
-    float distanceMatrix[MAX_BINS][MAX_BINS];
+    srand((unsigned int)time(NULL));
 
-    initializeBins(bins, &binCount);
+    initializeBins(
+        bins,
+        &binCount
+    );
 
     initializeVehicles(
         vehicles,
@@ -36,46 +41,22 @@ int main(void)
         driverCount
     );
 
-    generateBinDistanceMatrix(
+    displayBins(
+        bins,
+        binCount
+    );
+
+    Route route = generateRoute(
         bins,
         binCount,
-        distanceMatrix
+        &vehicles[2]
     );
 
-    displayDistanceMatrix(
+    displayRoute(
+        &route,
         bins,
-        binCount,
-        distanceMatrix
+        binCount
     );
-
-    int binIndex = 3;
-
-    int vehicleIndex =
-        findNearestAvailableVehicle(
-            vehicles,
-            vehicleCount,
-            &bins[binIndex]
-        );
-
-    printf(
-        "\nTarget Bin: B%d (%s)\n",
-        bins[binIndex].id,
-        bins[binIndex].location
-    );
-
-    if (vehicleIndex != -1)
-    {
-        printf(
-            "Nearest Available Vehicle: V%d\n",
-            vehicles[vehicleIndex].id
-        );
-    }
-    else
-    {
-        printf(
-            "No suitable vehicle available.\n"
-        );
-    }
 
     return 0;
 }
