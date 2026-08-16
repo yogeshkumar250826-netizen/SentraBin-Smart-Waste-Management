@@ -1,41 +1,32 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "models.h"
-#include "utils.h"
-#include "priority.h"
+#include "bin.h"
 
 int main(void)
 {
-    Bin bin = {
-        .id = 7,
-        .fillLevel = 90.0f,
-        .wasteType = WASTE_HAZARDOUS,
-        .complaintCount = 3,
-        .emergencyFlag = 1,
-        .status = BIN_AVAILABLE
-    };
+    Bin bins[MAX_BINS];
+    int binCount = 0;
 
-    updateBinPriority(&bin);
+    srand((unsigned int)time(NULL));
 
-    printf("Bin ID         : %d\n", bin.id);
-    printf("Fill Level     : %.1f%%\n", bin.fillLevel);
-    printf("Waste Type     : %s\n",
-           getWasteTypeString(bin.wasteType));
+    initializeBins(bins, &binCount);
 
-    printf("Complaints     : %d\n",
-           bin.complaintCount);
+    printf("\nINITIAL STATE\n");
+    displayBins(bins, binCount);
 
-    printf("Emergency      : %s\n",
-           bin.emergencyFlag ? "Yes" : "No");
+    printf("\nRunning one simulation cycle...\n");
 
-    printf("Priority Score : %.1f\n",
-           bin.priorityScore);
+    updateBinFillLevels(bins, binCount);
+    updateAllBinPriorities(bins, binCount);
 
-    printf("Priority       : %s\n",
-           getPriorityString(bin.priority));
+    printf("\nAFTER ONE CYCLE\n");
+    displayBins(bins, binCount);
 
-    printf("Status         : %s\n",
-           getBinStatusString(bin.status));
+    printf("\nCritical Bins: %d\n",
+           countCriticalBins(bins, binCount));
 
     return 0;
 }
