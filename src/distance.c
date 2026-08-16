@@ -106,6 +106,28 @@ int findNearestAvailableVehicle(
             bin->y
         );
 
+        float returnDistance = calculateManhattanDistance(
+    bin->x,
+    bin->y,
+    DEPOT_X,
+    DEPOT_Y
+);
+
+float totalTripDistance =
+    distance + returnDistance;
+
+float requiredFuel =
+    totalTripDistance /
+    vehicles[i].fuelEfficiency;
+
+    float availableFuel =
+    vehicles[i].fuelLevel;
+
+if (availableFuel < requiredFuel + 5.0f)
+{
+    continue;
+}
+
         if (distance < minimumDistance)
         {
             minimumDistance = distance;
