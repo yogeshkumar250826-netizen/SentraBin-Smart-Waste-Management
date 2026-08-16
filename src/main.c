@@ -1,36 +1,41 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 
 #include "models.h"
 #include "utils.h"
+#include "priority.h"
 
 int main(void)
 {
-    srand((unsigned int)time(NULL));
-
     Bin bin = {
-        .id = 1,
-        .fillLevel = 82.5f,
+        .id = 7,
+        .fillLevel = 90.0f,
         .wasteType = WASTE_HAZARDOUS,
-        .priority = PRIORITY_HIGH,
-        .status = BIN_COLLECTION_REQUIRED
+        .complaintCount = 3,
+        .emergencyFlag = 1,
+        .status = BIN_AVAILABLE
     };
 
-    printf("Bin ID      : %d\n", bin.id);
-    printf("Fill Level  : %.1f%%\n", bin.fillLevel);
-    printf("Waste Type  : %s\n", getWasteTypeString(bin.wasteType));
-    printf("Priority    : %s\n", getPriorityString(bin.priority));
-    printf("Status      : %s\n", getBinStatusString(bin.status));
+    updateBinPriority(&bin);
 
-    float distance = calculateManhattanDistance(
-        10.0f,
-        20.0f,
-        25.0f,
-        35.0f
-    );
+    printf("Bin ID         : %d\n", bin.id);
+    printf("Fill Level     : %.1f%%\n", bin.fillLevel);
+    printf("Waste Type     : %s\n",
+           getWasteTypeString(bin.wasteType));
 
-    printf("Distance    : %.1f units\n", distance);
+    printf("Complaints     : %d\n",
+           bin.complaintCount);
+
+    printf("Emergency      : %s\n",
+           bin.emergencyFlag ? "Yes" : "No");
+
+    printf("Priority Score : %.1f\n",
+           bin.priorityScore);
+
+    printf("Priority       : %s\n",
+           getPriorityString(bin.priority));
+
+    printf("Status         : %s\n",
+           getBinStatusString(bin.status));
 
     return 0;
 }
