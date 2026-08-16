@@ -2,29 +2,26 @@
 
 float calculatePriorityScore(const Bin *bin)
 {
-    float score = 0.0f;
+    float score;
 
-    /*
-     * Fill level contributes up to 60 points.
-     * 100% full bin -> 60 points.
-     */
-    score += bin->fillLevel * 0.60f;
+    if (bin->fillLevel <= 0.0f)
+        return 0.0f;
 
-    /*
-     * Waste type contribution.
-     */
+    /* Fill level is the primary factor */
+    score = bin->fillLevel * 0.80f;
+
     switch (bin->wasteType)
     {
         case WASTE_HAZARDOUS:
-            score += 20.0f;
-            break;
-
-        case WASTE_ORGANIC:
             score += 10.0f;
             break;
 
+        case WASTE_ORGANIC:
+            score += 6.0f;
+            break;
+
         case WASTE_RECYCLABLE:
-            score += 5.0f;
+            score += 3.0f;
             break;
 
         case WASTE_GENERAL:
@@ -32,20 +29,17 @@ float calculatePriorityScore(const Bin *bin)
             break;
     }
 
-    /*
-     * Complaints contribute up to 10 points.
-     * Each complaint adds 2 points.
-     */
-    score += bin->complaintCount * 2.0f;
+    /* Complaints contribute a maximum of 5 points */
+    float complaintScore =
+        bin->complaintCount * 2.0f;
 
-    if (score > 90.0f)
-        score = 90.0f;
+    if (complaintScore > 5.0f)
+        complaintScore = 5.0f;
 
-    /*
-     * Emergency adds the final urgency boost.
-     */
+    score += complaintScore;
+
     if (bin->emergencyFlag)
-        score += 10.0f;
+        score += 5.0f;
 
     if (score > 100.0f)
         score = 100.0f;
@@ -69,8 +63,26 @@ PriorityLevel determinePriorityLevel(float score)
 
 void updateBinPriority(Bin *bin)
 {
-    bin->priorityScore = calculatePriorityScore(bin);
-    bin->priority = determinePriorityLevel(bin->priorityScore);
+    bin->priorityScore =
+        calculatePriorityScore(bin);
+
+    bin->priority =
+        determinePriorityLevel(bin->priorityScore);
+
+    /*
+     * Operational overrides:
+     * fill level must trigger collection before overflow.
+     */
+    if (bin->emergencyFlag ||
+        bin->fillLevel >= 95.0f)
+    {
+        bin->priority = PRIORITY_CRITICAL;
+    }
+    else if (bin->fillLevel >= 80.0f &&
+             bin->priority < PRIORITY_HIGH)
+    {
+        bin->priority = PRIORITY_HIGH;
+    }
 
     if (bin->priority == PRIORITY_HIGH ||
         bin->priority == PRIORITY_CRITICAL)

@@ -18,4 +18,9 @@ void assignDriversToVehicles(
 
 void updateVehicleFuelState(Vehicle vehicles[], int vehicleCount);
 
+void returnVehicleToDepot(
+    Vehicle *vehicle,
+    SimulationStats *stats
+);
+
 #endif

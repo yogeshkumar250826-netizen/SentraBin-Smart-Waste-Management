@@ -22,4 +22,9 @@
 
 #define DEFAULT_FUEL_EFFICIENCY 8.0f
 
+#define DEPOT_X 5.0f
+#define DEPOT_Y 5.0f
+
+#define BIN_CAPACITY_KG 500.0f
+
 #endif

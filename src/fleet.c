@@ -190,3 +190,36 @@ void updateVehicleFuelState(Vehicle vehicles[], int vehicleCount)
         }
     }
 }
+
+void returnVehicleToDepot(Vehicle *vehicle,SimulationStats *stats)
+{
+    float distance = calculateManhattanDistance(vehicle->x,vehicle->y,DEPOT_X,DEPOT_Y);
+
+    float fuelUsed =distance / vehicle->fuelEfficiency;
+
+    printf("\nReturning V%d to depot...\n", vehicle->id);
+
+    printf("Return Distance : %.1f units\n", distance);
+
+    printf("Fuel Used       : %.2f L\n", fuelUsed);
+
+    vehicle->totalDistanceTravelled += distance;
+    vehicle->totalFuelConsumed += fuelUsed;
+
+    stats->totalDistanceTravelled += distance;
+    stats->totalFuelConsumed += fuelUsed;
+
+    vehicle->fuelLevel -= fuelUsed;
+
+    if (vehicle->fuelLevel < 0.0f)
+        vehicle->fuelLevel = 0.0f;
+
+    vehicle->x = DEPOT_X;
+    vehicle->y = DEPOT_Y;
+
+    printf("Waste Unloaded  : %.1f kg\n", vehicle->currentLoad);
+
+    vehicle->currentLoad = 0.0f;
+
+    printf("Vehicle V%d ready at depot.\n", vehicle->id);
+}

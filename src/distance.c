@@ -87,6 +87,18 @@ int findNearestAvailableVehicle(
             continue;
         }
 
+        float estimatedWaste =
+            (bin->fillLevel / 100.0f) * BIN_CAPACITY_KG;
+
+        float remainingCapacity =
+        vehicles[i].capacity -
+        vehicles[i].currentLoad;
+
+        if (estimatedWaste > remainingCapacity)
+        {
+            continue;
+        }
+
         float distance = calculateManhattanDistance(
             vehicles[i].x,
             vehicles[i].y,
