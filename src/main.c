@@ -1,32 +1,42 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 
 #include "models.h"
-#include "bin.h"
+#include "fleet.h"
 
 int main(void)
 {
-    Bin bins[MAX_BINS];
-    int binCount = 0;
+    Vehicle vehicles[MAX_VEHICLES];
+    Driver drivers[MAX_DRIVERS];
 
-    srand((unsigned int)time(NULL));
+    int vehicleCount = 0;
+    int driverCount = 0;
 
-    initializeBins(bins, &binCount);
+    initializeVehicles(vehicles, &vehicleCount);
+    initializeDrivers(drivers, &driverCount);
 
-    printf("\nINITIAL STATE\n");
-    displayBins(bins, binCount);
+    assignDriversToVehicles(
+        vehicles,
+        vehicleCount,
+        drivers,
+        driverCount
+    );
 
-    printf("\nRunning one simulation cycle...\n");
+    displayVehicles(vehicles, vehicleCount);
+    displayDrivers(drivers, driverCount);
 
-    updateBinFillLevels(bins, binCount);
-    updateAllBinPriorities(bins, binCount);
+    printf("\nTesting automatic refuelling...\n");
 
-    printf("\nAFTER ONE CYCLE\n");
-    displayBins(bins, binCount);
+    vehicles[0].fuelLevel = 10.0f;
 
-    printf("\nCritical Bins: %d\n",
-           countCriticalBins(bins, binCount));
+    updateVehicleFuelState(
+        vehicles,
+        vehicleCount
+    );
+
+    displayVehicles(
+        vehicles,
+        vehicleCount
+    );
 
     return 0;
 }
