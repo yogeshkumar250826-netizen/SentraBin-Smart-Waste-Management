@@ -87,8 +87,7 @@ int findNearestAvailableVehicle(
             continue;
         }
 
-        float estimatedWaste =
-            (bin->fillLevel / 100.0f) * BIN_CAPACITY_KG;
+        float estimatedWaste = bin->currentWasteKg;
 
         float remainingCapacity =
         vehicles[i].capacity -

@@ -6,7 +6,7 @@
 
 float estimateBinWasteKg(const Bin *bin)
 {
-    return (bin->fillLevel / 100.0f) * BIN_CAPACITY_KG;
+    return bin->currentWasteKg;
 }
 
 void executeCollectionRoute(
@@ -80,8 +80,9 @@ void executeCollectionRoute(
 
         vehicle->currentLoad += wasteKg;
 
-        bin->fillLevel = 0.0f;
-        bin->complaintCount = 0;
+        bin->currentWasteKg = 0.0f;
+bin->fillLevel = 0.0f;
+bin->complaintCount = 0;
 
         if (bin->emergencyFlag)
         {

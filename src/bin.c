@@ -116,6 +116,10 @@ void updateBinFillLevels(Bin bins[], int binCount)
             bins[i].fillLevel = MAX_FILL_LEVEL;
             bins[i].emergencyFlag = 1;
         }
+
+        bins[i].currentWasteKg =
+    (bins[i].fillLevel / 100.0f) *
+    bins[i].capacityKg;
     }
 }
 
