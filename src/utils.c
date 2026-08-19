@@ -117,3 +117,21 @@ const char *getDriverStatusString(DriverStatus status)
             return "Unknown";
     }
 }
+
+const char *getVehicleTypeString(VehicleType type)
+{
+    switch (type)
+    {
+        case VEHICLE_STANDARD:
+            return "Standard";
+
+        case VEHICLE_RECYCLING:
+            return "Recycling";
+
+        case VEHICLE_HAZMAT:
+            return "Hazmat";
+
+        default:
+            return "Unknown";
+    }
+}

@@ -5,8 +5,8 @@
 #include "models.h"
 #include "bin.h"
 #include "fleet.h"
-#include "simulation.h"
-#include "complaint.h"
+#include "storage.h"
+#include "menu.h"
 
 int main(void)
 {
@@ -24,184 +24,108 @@ int main(void)
 
     srand((unsigned int)time(NULL));
 
-    /* Initialize system data */
-    initializeBins(
-        bins,
-        &binCount
-    );
+    printf("\nStarting SentraBin...\n");
 
-    initializeVehicles(
-        vehicles,
-        &vehicleCount
-    );
-
-    initializeDrivers(
-        drivers,
-        &driverCount
-    );
-
-    assignDriversToVehicles(
-        vehicles,
-        vehicleCount,
-        drivers,
-        driverCount
-    );
-
-    printf("\nINITIAL SYSTEM STATE\n");
-
-    displayBins(
-        bins,
-        binCount
-    );
-
-    displayVehicles(
-        vehicles,
-        vehicleCount
-    );
-
-    /*
-     * Run first two normal simulation cycles.
-     */
-    for (int i = 0; i < 2; i++)
-    {
-        runSimulationCycle(
+    int binsLoaded =
+        loadBins(
             bins,
-            binCount,
+            &binCount
+        );
+
+    int vehiclesLoaded =
+        loadVehicles(
+            vehicles,
+            &vehicleCount
+        );
+
+    int driversLoaded =
+        loadDrivers(
+            drivers,
+            &driverCount
+        );
+
+    loadComplaints(
+        complaints,
+        &complaintCount
+    );
+
+    if (!binsLoaded ||
+        !vehiclesLoaded ||
+        !driversLoaded)
+    {
+        printf(
+            "No complete saved state found.\n"
+        );
+
+        printf(
+            "Initializing default system data...\n"
+        );
+
+        initializeBins(
+            bins,
+            &binCount
+        );
+
+        initializeVehicles(
+            vehicles,
+            &vehicleCount
+        );
+
+        initializeDrivers(
+            drivers,
+            &driverCount
+        );
+
+        assignDriversToVehicles(
             vehicles,
             vehicleCount,
+            drivers,
+            driverCount
+        );
+
+        complaintCount = 0;
+
+        saveBins(
+            bins,
+            binCount
+        );
+
+        saveVehicles(
+            vehicles,
+            vehicleCount
+        );
+
+        saveDrivers(
+            drivers,
+            driverCount
+        );
+
+        saveComplaints(
             complaints,
-            complaintCount,
-            &stats
+            complaintCount
+        );
+
+        printf(
+            "Default system initialized successfully.\n"
+        );
+    }
+    else
+    {
+        printf(
+            "Previous system state loaded successfully.\n"
         );
     }
 
-    /*
-     * Simulate a citizen complaint arriving
-     * after two cycles.
-     */
-    printf("\n");
-    printf("=====================================================\n");
-    printf("                 NEW COMPLAINT\n");
-    printf("=====================================================\n");
-
-    submitComplaint(
+    runMainMenu(
+        bins,
+        &binCount,
+        vehicles,
+        &vehicleCount,
+        drivers,
+        &driverCount,
         complaints,
         &complaintCount,
-        bins,
-        binCount,
-        "Near Perambur bus stand",
-        "Garbage is overflowing and there is a bad smell"
-    );
-
-    displayComplaints(
-        complaints,
-        complaintCount
-    );
-
-    printf("\nBIN STATE AFTER COMPLAINT\n");
-
-    displayBins(
-        bins,
-        binCount
-    );
-
-    /*
-     * Run next cycle.
-     * The complaint should influence priority and routing.
-     */
-    runSimulationCycle(
-        bins,
-        binCount,
-        vehicles,
-        vehicleCount,
-        complaints,
-        complaintCount,
         &stats
-    );
-
-    /*
-     * Complaint should now be resolved
-     * if the corresponding bin was serviced.
-     */
-    printf("\nCOMPLAINT STATUS AFTER COLLECTION\n");
-
-    displayComplaints(
-        complaints,
-        complaintCount
-    );
-
-    /*
-     * Run two more cycles so total cycles = 5.
-     */
-    for (int i = 0; i < 2; i++)
-    {
-        runSimulationCycle(
-            bins,
-            binCount,
-            vehicles,
-            vehicleCount,
-            complaints,
-            complaintCount,
-            &stats
-        );
-    }
-
-    printf("\n");
-    printf("=====================================================\n");
-    printf("              FINAL SIMULATION SUMMARY\n");
-    printf("=====================================================\n");
-
-    printf(
-        "Cycles Completed       : %d\n",
-        stats.cycleNumber
-    );
-
-    printf(
-        "Bins Collected         : %d\n",
-        stats.binsCollected
-    );
-
-    printf(
-        "Complaints Handled     : %d\n",
-        stats.complaintsHandled
-    );
-
-    printf(
-        "Emergencies Handled    : %d\n",
-        stats.emergenciesHandled
-    );
-
-    printf(
-        "Total Distance         : %.1f units\n",
-        stats.totalDistanceTravelled
-    );
-
-    printf(
-        "Total Fuel Consumed    : %.2f L\n",
-        stats.totalFuelConsumed
-    );
-
-    printf("=====================================================\n");
-
-    printf("\nFINAL BIN STATE\n");
-
-    displayBins(
-        bins,
-        binCount
-    );
-
-    printf("\nFINAL FLEET STATE\n");
-
-    displayVehicles(
-        vehicles,
-        vehicleCount
-    );
-
-    printf("\nFINAL COMPLAINT LOG\n");
-
-    displayComplaints(
-        complaints,
-        complaintCount
     );
 
     return 0;

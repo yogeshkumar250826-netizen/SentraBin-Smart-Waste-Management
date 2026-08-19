@@ -14,4 +14,6 @@ const char *getBinStatusString(BinStatus status);
 const char *getVehicleStatusString(VehicleStatus status);
 const char *getDriverStatusString(DriverStatus status);
 
+const char *getVehicleTypeString(VehicleType type);
+
 #endif

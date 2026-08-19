@@ -49,6 +49,13 @@ typedef enum
     COMPLAINT_RESOLVED
 } ComplaintStatus;
 
+typedef enum
+{
+    VEHICLE_STANDARD,
+    VEHICLE_RECYCLING,
+    VEHICLE_HAZMAT
+} VehicleType;
+
 
 /* ---------- BIN ---------- */
 
@@ -84,6 +91,8 @@ typedef struct
 
     char registrationNumber[MAX_NAME_LENGTH];
 
+    VehicleType type;
+
     float capacity;
     float currentLoad;
 
@@ -114,6 +123,8 @@ typedef struct
     DriverStatus status;
 
     int assignedVehicleId;
+
+    int hazmatCertified;
 
 } Driver;
 

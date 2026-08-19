@@ -23,4 +23,16 @@ void returnVehicleToDepot(
     SimulationStats *stats
 );
 
+int isVehicleCompatibleWithBin(
+    const Vehicle *vehicle,
+    const Bin *bin
+);
+
+int isDriverEligibleForBin(
+    const Driver drivers[],
+    int driverCount,
+    int driverId,
+    const Bin *bin
+);
+
 #endif

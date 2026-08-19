@@ -1,0 +1,4 @@
+id,registrationNumber,capacity,currentLoad,fuelLevel,fuelEfficiency,x,y,status,assignedDriverId,totalDistance,totalFuel
+1,TN01AB1001,500.00,0.00,80.00,8.00,5.00,5.00,0,1,0.00,0.00
+2,TN02CD2002,700.00,0.00,65.00,9.00,20.00,10.00,0,2,0.00,0.00
+3,TN03EF3003,900.00,0.00,90.00,10.00,10.00,15.00,0,3,0.00,0.00

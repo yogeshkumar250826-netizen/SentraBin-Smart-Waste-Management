@@ -16,6 +16,7 @@ void initializeVehicles(Vehicle vehicles[], int *vehicleCount)
         .fuelEfficiency = 8.0f,
         .x = 5.0f,
         .y = 5.0f,
+        .type = VEHICLE_STANDARD,
         .status = VEHICLE_AVAILABLE,
         .assignedDriverId = -1,
         .totalDistanceTravelled = 0.0f,
@@ -31,6 +32,7 @@ void initializeVehicles(Vehicle vehicles[], int *vehicleCount)
         .fuelEfficiency = 9.0f,
         .x = 20.0f,
         .y = 10.0f,
+        .type = VEHICLE_HAZMAT,
         .status = VEHICLE_AVAILABLE,
         .assignedDriverId = -1,
         .totalDistanceTravelled = 0.0f,
@@ -46,6 +48,7 @@ void initializeVehicles(Vehicle vehicles[], int *vehicleCount)
         .fuelEfficiency = 10.0f,
         .x = 10.0f,
         .y = 15.0f,
+        .type = VEHICLE_RECYCLING,
         .status = VEHICLE_AVAILABLE,
         .assignedDriverId = -1,
         .totalDistanceTravelled = 0.0f,
@@ -110,29 +113,31 @@ void displayVehicles(const Vehicle vehicles[], int vehicleCount)
     printf("                                      VEHICLE STATUS\n");
     printf("==============================================================================================\n");
 
-    printf("%-5s %-12s %-10s %-10s %-10s %-10s %-12s %-10s\n",
-           "ID",
-           "Reg No",
-           "Capacity",
-           "Load",
-           "Fuel",
-           "Driver",
-           "Status",
-           "Distance");
+    printf("%-5s %-12s %-12s %-10s %-10s %-10s %-10s %-12s %-10s\n",
+       "ID",
+       "Reg No",
+       "Type",
+       "Capacity",
+       "Load",
+       "Fuel",
+       "Driver",
+       "Status",
+       "Distance");
 
     printf("----------------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < vehicleCount; i++)
     {
-        printf("%-5d %-12s %-10.1f %-10.1f %-9.1f%% %-10d %-12s %-10.1f\n",
-               vehicles[i].id,
-               vehicles[i].registrationNumber,
-               vehicles[i].capacity,
-               vehicles[i].currentLoad,
-               vehicles[i].fuelLevel,
-               vehicles[i].assignedDriverId,
-               getVehicleStatusString(vehicles[i].status),
-               vehicles[i].totalDistanceTravelled);
+        printf("%-5d %-12s %-12s %-10.1f %-10.1f %-9.1f%% %-10d %-12s %-10.1f\n",
+       vehicles[i].id,
+       vehicles[i].registrationNumber,
+       getVehicleTypeString(vehicles[i].type),
+       vehicles[i].capacity,
+       vehicles[i].currentLoad,
+       vehicles[i].fuelLevel,
+       vehicles[i].assignedDriverId,
+       getVehicleStatusString(vehicles[i].status),
+       vehicles[i].totalDistanceTravelled);
     }
 
     printf("==============================================================================================\n");
@@ -145,21 +150,23 @@ void displayDrivers(const Driver drivers[], int driverCount)
     printf("                         DRIVER STATUS\n");
     printf("==============================================================\n");
 
-    printf("%-5s %-15s %-15s %-10s\n",
-           "ID",
-           "Name",
-           "Status",
-           "Vehicle");
+   printf("%-5s %-15s %-15s %-10s %-10s\n",
+       "ID",
+       "Name",
+       "Status",
+       "Vehicle",
+       "Hazmat");
 
     printf("--------------------------------------------------------------\n");
 
     for (int i = 0; i < driverCount; i++)
     {
-        printf("%-5d %-15s %-15s %-10d\n",
-               drivers[i].id,
-               drivers[i].name,
-               getDriverStatusString(drivers[i].status),
-               drivers[i].assignedVehicleId);
+        printf("%-5d %-15s %-15s %-10d %-10s\n",
+       drivers[i].id,
+       drivers[i].name,
+       getDriverStatusString(drivers[i].status),
+       drivers[i].assignedVehicleId,
+       drivers[i].hazmatCertified ? "YES" : "NO");
     }
 
     printf("==============================================================\n");
@@ -222,4 +229,48 @@ void returnVehicleToDepot(Vehicle *vehicle,SimulationStats *stats)
     vehicle->currentLoad = 0.0f;
 
     printf("Vehicle V%d ready at depot.\n", vehicle->id);
+}
+
+int isVehicleCompatibleWithBin(
+    const Vehicle *vehicle,
+    const Bin *bin
+)
+{
+    if (bin->wasteType == WASTE_HAZARDOUS)
+    {
+        return vehicle->type == VEHICLE_HAZMAT;
+    }
+
+    if (bin->wasteType == WASTE_RECYCLABLE)
+    {
+        return vehicle->type == VEHICLE_RECYCLING ||
+               vehicle->type == VEHICLE_STANDARD;
+    }
+
+    return vehicle->type == VEHICLE_STANDARD ||
+           vehicle->type == VEHICLE_RECYCLING ||
+           vehicle->type == VEHICLE_HAZMAT;
+}
+
+int isDriverEligibleForBin(
+    const Driver drivers[],
+    int driverCount,
+    int driverId,
+    const Bin *bin
+)
+{
+    for (int i = 0; i < driverCount; i++)
+    {
+        if (drivers[i].id == driverId)
+        {
+            if (bin->wasteType == WASTE_HAZARDOUS)
+            {
+                return drivers[i].hazmatCertified;
+            }
+
+            return 1;
+        }
+    }
+
+    return 0;
 }

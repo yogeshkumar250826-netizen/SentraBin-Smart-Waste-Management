@@ -1,0 +1,7 @@
+id,location,zone,fillLevel,wasteType,priorityScore,priority,emergencyFlag,complaintCount,status,x,y
+1,Anna Nagar,North,55.00,0,44.00,0,0,0,0,10.00,20.00
+2,T Nagar,Central,72.00,2,65.60,1,0,1,0,30.00,25.00
+3,Adyar,South,80.00,1,67.00,2,0,0,1,45.00,40.00
+4,Perambur,North,91.00,3,86.80,3,0,2,1,18.00,60.00
+5,Velachery,South,48.00,0,38.40,0,0,0,0,60.00,50.00
+6,Guindy,Central,65.00,2,60.00,1,0,1,0,50.00,30.00
